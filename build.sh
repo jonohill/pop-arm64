@@ -7,4 +7,4 @@ sudo apt-get install -y debootstrap mtools parted gnupg systemd-container eatmyd
 
 git clone https://github.com/pop-os/pop-arm64.git pop
 cd pop
-./build-generic.sh
+sudo ./build-generic.sh
