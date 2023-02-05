@@ -1,0 +1,37 @@
+name: build docker image
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+
+  arm_runner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start arm64 runner
+        run: |
+          curl -vfs https://circleci.com/api/v2/project/gh/jonohill/circle-gh-runner/pipeline \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H 'Circle-Token: ${{ secrets.CCI_TOKEN }}' \
+            --data-binary '{ "branch": "main", "parameters": { "GH_REPO": "${{ github.repository }}" } }'
+
+  build:
+    runs-on: [self-hosted, linux, arm64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: ./build.sh
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: img
+          path: pop/build/*.img
+
